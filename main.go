@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/Anna-Tregub/go_final_project/internal/handlers"
@@ -28,7 +29,10 @@ func main() {
 	http.HandleFunc("/api/tasks", handlers.TasksGetHandler(store))
 	http.HandleFunc("/api/task/done", handlers.TaskDoneHandler(store))
 
-	err := http.ListenAndServe(":7540", nil)
+	port := ":7540"
+	log.Println("Приложение запущено на порту", port)
+
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		panic(err)
 	}

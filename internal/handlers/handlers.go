@@ -7,9 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Anna-Tregub/go_final_project/internal/tasks"
-
 	"github.com/Anna-Tregub/go_final_project/internal/storage"
+	"github.com/Anna-Tregub/go_final_project/internal/tasks"
 	"github.com/Anna-Tregub/go_final_project/models"
 )
 
@@ -30,7 +29,7 @@ func NextDateHandler(res http.ResponseWriter, req *http.Request) {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Возвращаем ответ
+
 	_, err = res.Write([]byte(nextDate))
 	if err != nil {
 		log.Fatal(err)
@@ -72,7 +71,7 @@ func TaskDoneHandler(store storage.Store) http.HandlerFunc {
 }
 func TaskGetHandler(store storage.Store) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
-		//var t configs.Task
+
 		id := req.URL.Query().Get("id")
 		task, err := store.GetTask(id)
 		if err != nil {
@@ -81,7 +80,7 @@ func TaskGetHandler(store storage.Store) http.HandlerFunc {
 			json.NewEncoder(res).Encode(models.ErrorResponse)
 			return
 		}
-		// Возвращаем ответ
+
 		res.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(res).Encode(task); err != nil {
 			http.Error(res, `{"error":"Ошибка кодирования JSON"}`, http.StatusInternalServerError)

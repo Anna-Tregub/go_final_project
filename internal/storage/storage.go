@@ -30,7 +30,7 @@ func OpenDataBase() *sql.DB {
 		install = true
 	}
 
-	db, err := sql.Open("sqlite", "scheduler.db")
+	db, err := sql.Open("sqlite", dbFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,10 +130,15 @@ func (s *Store) GetTasks(search string) ([]models.Task, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&t.ID, &t.Date, &t.Title, &t.Comment, &t.Repeat)
-		if err = rows.Err(); err != nil {
-			return []models.Task{}, fmt.Errorf(`{"error":"Ошибка распознавания данных"}`)
+
+		if err := rows.Err(); err != nil {
+			return nil, fmt.Errorf(`{"error":"Ошибка при извлечении данных"}`)
 		}
+		err := rows.Scan(&t.ID, &t.Date, &t.Title, &t.Comment, &t.Repeat)
+		if err != nil {
+			return nil, fmt.Errorf(`{"error":"Ошибка распознавания данных"}`)
+		}
+
 		tasks = append(tasks, t)
 	}
 	if len(tasks) == 0 {
